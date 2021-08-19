@@ -1,2 +1,2 @@
-# probstat
-Probability and Statistics from Scratch
+# Probability and Statistics from Scratch
+
