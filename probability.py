@@ -39,7 +39,7 @@ class DiscreteDistribution:
             self.var = self.p * self.q
             
         def __repr__(self):
-            return f"Bernoulli with mean = {self.mean} and var = {self.var}"
+            return f"Bernoulli with mean = {self.mean} and variance = {self.var}"
         
         def __call__(self, x: float) -> float:
             if not(x in (0, 1)):
