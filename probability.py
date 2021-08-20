@@ -27,5 +27,24 @@ class Event:
         return self.cardinality / self.sample_space.cardinality
     
     
+class DiscreteDistribution:
+    def __init__(self):
+        pass
+    
+    class bernoulli:
+        def __init__(self, p: float):
+            self.p = p 
+            self.q = 1 - self.p
+            self.mean = self.p
+            self.var = self.p * self.q
+            
+        def __repr__(self):
+            return f"Bernoulli with mean = {self.mean} and var = {self.var}"
         
+        def __call__(self, x: float) -> float:
+            if not(x in (0, 1)):
+                return 0
+            return self.p**x * self.q**(1-x)
+            
+    
         
