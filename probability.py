@@ -4,6 +4,7 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
+from utils import C
 
 class SampleSpace:
     def __init__(self, data: set):
@@ -36,12 +37,29 @@ class DiscreteDistribution:
             self.var = self.p * self.q
             
         def __repr__(self):
-            return f"Bernoulli with mean = {self.mean} and variance = {self.var}"
+            return f"Bernoulli with probability {self.p} \nmean = {self.mean} and variance = {self.var}"
         
         def __call__(self, x: float) -> float:
             if not(x in (0, 1)):
                 return 0
             return self.p**x * self.q**(1-x)
+        
+    class binomial:
+        def __init__(self, n: int, p: float):
+            assert 0 <= p <= 1, "Probability of success must be between 0 and 1"
+            self.n = n
+            self.p = p 
+            self.q = 1 - self.p
+            self.mean = self.n * self.p
+            self.var = self.n * self.p * self.q
+            
+        def __repr__(self):
+            return f"Binomial with {self.n} number of trials and probability {self.p} \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x: float) -> float:
+            if not(x in range(self.n+1)):
+                return 0
+            return C(self.n, x) * self.p**x * self.q**(self.n-x)
             
         
 def prob(event: Event) -> float:

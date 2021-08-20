@@ -86,7 +86,6 @@ def summation(f, a: int, b: int) -> float:
 
     '''
     
-    assert type(f) == type(P), "f must be a function"
     s = 0
     for i in range(a, b):
         s += f(i)
@@ -115,7 +114,6 @@ def integral(f, a: float, b: float, n: int = 1000) -> float:
 
     '''
     
-    assert type(f) == type(P), "f must be a function"
     dx = (b - a) / n
     F = 0
     x = a
