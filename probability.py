@@ -23,16 +23,13 @@ class Event:
     def isSubset(self, Omega: SampleSpace):
         return all([i in Omega.elements for i in self.elements])
     
-    def prob(self):
-        return self.cardinality / self.sample_space.cardinality
-    
-    
 class DiscreteDistribution:
     def __init__(self):
         pass
     
     class bernoulli:
         def __init__(self, p: float):
+            assert 0 <= p <= 1, "Probability of success must be between 0 and 1"
             self.p = p 
             self.q = 1 - self.p
             self.mean = self.p
@@ -46,5 +43,18 @@ class DiscreteDistribution:
                 return 0
             return self.p**x * self.q**(1-x)
             
+        
+def prob(event: Event) -> float:
+    return event.cardinality / event.sample_space.cardinality
+    
+def prob_given(A: Event, B: Event) -> float:
+    assert B.isSubset(A.sample_space), "The events must be from the same sample space"
+    return A.cardinality / B.cardinality 
+
+def prob_or(A: Event, B: Event) -> float:
+    return prob(A) + prob(B) - prob_and(A, B)
+
+def prob_and(A: Event, B: Event) -> float:    
+    return prob(B) * prob_given(A, B)
     
         
