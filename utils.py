@@ -4,6 +4,14 @@ Created on Thu Aug 19 19:35:05 2021
 
 @author: Gabriel
 """
+def floor(x: float) -> int:
+    return int(x)
+
+def ceil(x: float) -> int:
+    return int(x) + 1
+
+def frac(x: float) -> int:
+    return x - int(x)
 
 def fact(n: int) -> int:
     '''

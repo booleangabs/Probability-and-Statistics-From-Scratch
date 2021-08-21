@@ -4,7 +4,7 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
-from utils import C
+from utils import C, summation, integral, floor, ceil
 
 class SampleSpace:
     def __init__(self, data: set):
@@ -39,10 +39,18 @@ class DiscreteDistribution:
         def __repr__(self):
             return f"Bernoulli with probability {self.p} \nmean = {self.mean} and variance = {self.var}"
         
-        def __call__(self, x: float) -> float:
+        def __call__(self, x: int) -> int:
             if not(x in (0, 1)):
                 return 0
             return self.p**x * self.q**(1-x)
+        
+        def cdf(self, x: int) -> int:
+            if x < 0:
+                return 0
+            elif x > 1:
+                return 1
+            else:
+                return self.q
         
     class binomial:
         def __init__(self, n: int, p: float):
@@ -56,10 +64,19 @@ class DiscreteDistribution:
         def __repr__(self):
             return f"Binomial with {self.n} number of trials and probability {self.p} \nmean = {self.mean} and variance = {self.var}"
         
-        def __call__(self, x: float) -> float:
+        def __call__(self, x: int) -> int:
             if not(x in range(self.n+1)):
                 return 0
             return C(self.n, x) * self.p**x * self.q**(self.n-x)
+        
+        def cdf(self, x: int) -> float:
+            if x < 0:
+                return 0
+            elif x > self.n:
+                return 1
+            else:
+                f = lambda t: (t**(self.n - x - 1)) * (1-t)**x
+                return (self.n - x)*C(self.n, x)*integral(f, 0, self.q)
             
         
 def prob(event: Event) -> float:
