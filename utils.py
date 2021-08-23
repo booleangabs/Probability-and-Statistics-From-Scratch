@@ -4,6 +4,8 @@ Created on Thu Aug 19 19:35:05 2021
 
 @author: Gabriel
 """
+import numpy as np
+
 def floor(x: float) -> int:
     return int(x)
 
@@ -96,7 +98,7 @@ def summation(f, a: int, b: int) -> float:
     
     s = 0
     for i in range(a, b):
-        s += f(i)
+        s += np.round(f(i), 4)
     
     return s
 
@@ -126,11 +128,32 @@ def integral(f, a: float, b: float, n: int = 1000) -> float:
     F = 0
     x = a
     for i in range(n + 1):
-        F += f(x) * dx
+        F += np.round(f(x) * dx, 4)
         x += dx
         
     return F
 
+def generate_range(a, b, n):
+    '''
+    Generates a n+1 numbers betwen a and b with a constant step.
 
+    Parameters
+    ----------
+    a : int
+        Lower value.
+    b : int
+        Upper value.
+    n : int
+        Size of the list. Must be even more increased as |b-a| gets bigger.
 
+    Returns
+    -------
+    list
+        List of n+1 numbers inside the [a, b] interval.
+
+    '''    
+    temp = [i/n for i in range(n+1)]
+    diff = (b - a)
+    return [i * diff + a for i in temp]
+    
     

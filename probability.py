@@ -4,9 +4,15 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
-from utils import C, summation, integral, floor, ceil
+from utils import C, integral
+import numpy as np
 
 class SampleSpace:
+    '''
+    Defines a sample space for an arbitrary random experiment.
+    
+    It is expected that strings or numbers as well as tuples of those are used to define the elements of the set.
+    '''
     def __init__(self, data: set):
         self.elements = data
         self.cardinality = len(self.elements)
@@ -15,20 +21,35 @@ class SampleSpace:
         return f"{self.elements}"
     
 class Event:
+    '''
+    Defines a subset of a sample space.
+    
+    '''
     def __init__(self, data: set, sample_space: SampleSpace):
         self.elements = data
         self.cardinality = len(self.elements)
         assert self.isSubset(sample_space), "The event must be a subset of the sample space."
         self.sample_space = sample_space
         
-    def isSubset(self, Omega: SampleSpace):
+    def isSubset(self, Omega: SampleSpace) -> bool:
         return all([i in Omega.elements for i in self.elements])
-    
+
+
 class DiscreteDistribution:
-    def __init__(self):
-        pass
+    '''
+    Contains the implementation of the most relevant discrete distributions.
+    
+    Each one can be called returning the probability of assuming value x,
+    each one has the mean, variance (var), skewness (sk) and kurtosis (kts) available.
+    A cdf method is also available and calculate F(X <= x).
+    '''
     
     class bernoulli:
+        '''
+        Bernoulli distribution.
+        
+        Distribution for a binary random value with a given probability of success p.
+        '''
         def __init__(self, p: float):
             assert 0 <= p <= 1, "Probability of success must be between 0 and 1"
             self.p = p 
@@ -39,20 +60,25 @@ class DiscreteDistribution:
         def __repr__(self):
             return f"Bernoulli with probability {self.p} \nmean = {self.mean} and variance = {self.var}"
         
-        def __call__(self, x: int) -> int:
+        def __call__(self, x: int) -> float:
             if not(x in (0, 1)):
                 return 0
             return self.p**x * self.q**(1-x)
         
-        def cdf(self, x: int) -> int:
+        def cdf(self, x: int) -> float:
             if x < 0:
                 return 0
-            elif x > 1:
+            elif x >= 1:
                 return 1
             else:
                 return self.q
         
     class binomial:
+        '''
+        Binomial Distribution
+        
+        Distribuition for n trials of Bernoulli experiment with probability of success p
+        '''
         def __init__(self, n: int, p: float):
             assert 0 <= p <= 1, "Probability of success must be between 0 and 1"
             self.n = n
@@ -62,34 +88,99 @@ class DiscreteDistribution:
             self.var = self.n * self.p * self.q
             
         def __repr__(self):
-            return f"Binomial with {self.n} number of trials and probability {self.p} \nmean = {self.mean} and variance = {self.var}"
+            return f"Binomial with {self.n} number of trials and probability {self.p} \
+                     \nmean = {self.mean} and variance = {self.var}"
         
-        def __call__(self, x: int) -> int:
+        def __call__(self, x: int) -> float:
             if not(x in range(self.n+1)):
                 return 0
-            return C(self.n, x) * self.p**x * self.q**(self.n-x)
+            return np.round(C(self.n, x) * self.p**x * self.q**(self.n-x), 4)
         
         def cdf(self, x: int) -> float:
             if x < 0:
                 return 0
-            elif x > self.n:
+            elif x >= self.n:
                 return 1
             else:
                 f = lambda t: (t**(self.n - x - 1)) * (1-t)**x
                 return (self.n - x)*C(self.n, x)*integral(f, 0, self.q)
-            
         
 def prob(event: Event) -> float:
+    '''
+    P(E) = NFC(E) / NCT(S)
+    where,
+     - NFC : Number of favorable cases to event E
+     - TNC : Cardinality of the sample space S
+
+    Parameters
+    ----------
+    event : Event
+
+    Returns
+    -------
+    float
+        P(E).
+
+    '''
     return event.cardinality / event.sample_space.cardinality
     
 def prob_given(A: Event, B: Event) -> float:
+    '''
+    P(A|B) = NCF(A) / NCF(B)
+    where,
+     - NFC : Number of favorable cases to the event
+     
+    Parameters
+    ----------
+    A : Event
+    
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A|B).
+
+    '''
     assert B.isSubset(A.sample_space), "The events must be from the same sample space"
     return A.cardinality / B.cardinality 
 
 def prob_or(A: Event, B: Event) -> float:
-    return prob(A) + prob(B) - prob_and(A, B)
+    '''
+    P(A or B) = P(A) + P(B) - P(A and B)
 
-def prob_and(A: Event, B: Event) -> float:    
-    return prob(B) * prob_given(A, B)
-    
+    Parameters
+    ----------
+    A : Event
         
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A or B).
+
+    '''
+    return np.round(prob(A) + prob(B) - prob_and(A, B), 4)
+
+def prob_and(A: Event, B: Event) -> float:
+    '''
+    P(A and B) = P(A)P(B|A) = P(B)P(A|B)
+
+    Parameters
+    ----------
+    A : Event
+        
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A and B).
+
+    '''
+    return np.round(prob(B) * prob_given(A, B), 4)
+    
