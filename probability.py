@@ -4,8 +4,10 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
-from utils import C, integral
+from utils import C, integral 
 import numpy as np
+
+# Basic concepts
 
 class SampleSpace:
     '''
@@ -34,6 +36,107 @@ class Event:
     def isSubset(self, Omega: SampleSpace) -> bool:
         return all([i in Omega.elements for i in self.elements])
 
+def prob(event: Event) -> float:
+    '''
+    P(E) = NFC(E) / NCT(S)
+    where,
+     - NFC : Number of favorable cases to event E
+     - TNC : Cardinality of the sample space S
+
+    Parameters
+    ----------
+    event : Event
+
+    Returns
+    -------
+    float
+        P(E).
+
+    '''
+    return event.cardinality / event.sample_space.cardinality
+    
+def probGiven(A: Event, B: Event) -> float:
+    '''
+    P(A|B) = NCF(A) / NCF(B)
+    where,
+     - NFC : Number of favorable cases to the event
+     
+    Parameters
+    ----------
+    A : Event
+    
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A|B).
+
+    '''
+    assert B.isSubset(A.sample_space), "The events must be from the same sample space"
+    return A.cardinality / B.cardinality 
+
+def probOr(A: Event, B: Event) -> float:
+    '''
+    P(A or B) = P(A) + P(B) - P(A and B)
+
+    Parameters
+    ----------
+    A : Event
+        
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A or B).
+
+    '''
+    return np.round(prob(A) + prob(B) - probAnd(A, B), 4)
+
+def probAnd(A: Event, B: Event) -> float:
+    '''
+    P(A and B) = P(A)P(B|A) = P(B)P(A|B)
+
+    Parameters
+    ----------
+    A : Event
+        
+    B : Event
+        
+
+    Returns
+    -------
+    float
+        P(A and B).
+
+    '''
+    return np.round(prob(B) * probGiven(A, B), 4)
+
+def checkDisjointUnion(P: list) -> bool:
+    '''
+    Returns True if the sets are a disjoint union (partition of a bigger set).
+
+    Parameters
+    ----------
+    P : list
+        List of events.
+
+    Returns
+    -------
+    bool
+        Is disjoint union
+
+    '''
+    sum1 = sum([len(E) for E in P])
+    union = P[0]
+    for i in range(1, len(P)):
+        union = union.union(P[i])
+    return sum1 == len(union)            
+            
+# Probability distributions
 
 class DiscreteDistribution:
     '''
@@ -105,82 +208,3 @@ class DiscreteDistribution:
                 f = lambda t: (t**(self.n - x - 1)) * (1-t)**x
                 return (self.n - x)*C(self.n, x)*integral(f, 0, self.q)
         
-def prob(event: Event) -> float:
-    '''
-    P(E) = NFC(E) / NCT(S)
-    where,
-     - NFC : Number of favorable cases to event E
-     - TNC : Cardinality of the sample space S
-
-    Parameters
-    ----------
-    event : Event
-
-    Returns
-    -------
-    float
-        P(E).
-
-    '''
-    return event.cardinality / event.sample_space.cardinality
-    
-def prob_given(A: Event, B: Event) -> float:
-    '''
-    P(A|B) = NCF(A) / NCF(B)
-    where,
-     - NFC : Number of favorable cases to the event
-     
-    Parameters
-    ----------
-    A : Event
-    
-    B : Event
-        
-
-    Returns
-    -------
-    float
-        P(A|B).
-
-    '''
-    assert B.isSubset(A.sample_space), "The events must be from the same sample space"
-    return A.cardinality / B.cardinality 
-
-def prob_or(A: Event, B: Event) -> float:
-    '''
-    P(A or B) = P(A) + P(B) - P(A and B)
-
-    Parameters
-    ----------
-    A : Event
-        
-    B : Event
-        
-
-    Returns
-    -------
-    float
-        P(A or B).
-
-    '''
-    return np.round(prob(A) + prob(B) - prob_and(A, B), 4)
-
-def prob_and(A: Event, B: Event) -> float:
-    '''
-    P(A and B) = P(A)P(B|A) = P(B)P(A|B)
-
-    Parameters
-    ----------
-    A : Event
-        
-    B : Event
-        
-
-    Returns
-    -------
-    float
-        P(A and B).
-
-    '''
-    return np.round(prob(B) * prob_given(A, B), 4)
-    
