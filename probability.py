@@ -262,3 +262,49 @@ class DiscreteDistribution:
                 return 0
             else:
                 return np.round(summation(self, 0, x) , 4)
+            
+    class DiscreteUniform:
+        '''
+        Discrete Uniform Distribution
+        
+        Distribution for events with uniform probability of happening
+        '''
+        def __init__(self, a: int, b: int):
+            assert 0 <= a <= b, "Invalid interval"
+            self.a = a
+            self.b = b 
+            self.n = b - a + 1
+            self.p = 1 / self.n
+            self.mean = np.round((self.a + self.b) / 2, 4)
+            self.var = np.round((self.n**2 - 1) / 12, 4)
+            
+        def __repr__(self):
+            return f"Discrete uniform with probability {self.p:.4f} \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x: int) -> float:
+            if not(self.a <= x <= self.b):
+                raise Exception(f"x must be a integer in [{self.a}, {self.b}]")
+            return np.round(self.p, 4)
+        
+        def cdf(self, x: int) -> float:
+            if x < 0:
+                return 0
+            elif x >= self.b:
+                return 1
+            else:
+                return np.round(x * self.p , 4)
+            
+
+class ContinuousDistribution:
+    class Uniform:
+        pass
+    
+    class Exponentia:
+        pass
+    
+    class Normal:
+        pass
+    
+    class T_student:
+        pass
