@@ -4,7 +4,7 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
-from utils import C, integral 
+from utils import C, integral, summation, fact
 import numpy as np
 
 # Basic concepts
@@ -235,3 +235,30 @@ class DiscreteDistribution:
                 return 0
             else:
                 return np.round(1 - self.q**(x + 1), 4)
+    
+    class Poisson:
+        '''
+        Poisson Distribution
+        
+        Distribution for the number of ocurrences in a given time/space interval
+        '''
+        def __init__(self, lam: int):
+            assert (0 < lam), "Average success rate must be a positive integer"
+            self.lam = lam
+            self.mean = lam
+            self.var = lam
+            
+        def __repr__(self):
+            return f"Poisson with average success rate {self.lam} \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x: int) -> float:
+            if not(x >= 0):
+                raise Exception("x must be greater or equal to 0")
+            return np.round((((self.lam**x) * (np.e**(-self.lam))) / fact(x)), 4)
+        
+        def cdf(self, x: int) -> float:
+            if x < 0:
+                return 0
+            else:
+                return np.round(summation(self, 0, x) , 4)
