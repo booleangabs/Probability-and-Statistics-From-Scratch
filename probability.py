@@ -147,7 +147,7 @@ class DiscreteDistribution:
     A cdf method is also available and calculate F(X <= x).
     '''
     
-    class bernoulli:
+    class Bernoulli:
         '''
         Bernoulli distribution.
         
@@ -165,8 +165,8 @@ class DiscreteDistribution:
         
         def __call__(self, x: int) -> float:
             if not(x in (0, 1)):
-                return 0
-            return self.p**x * self.q**(1-x)
+                raise Exception("Invalid outcome for a bernoulli trial (x must be binary)")
+            return self.p**x * self.q**(1 - x)
         
         def cdf(self, x: int) -> float:
             if x < 0:
@@ -176,7 +176,7 @@ class DiscreteDistribution:
             else:
                 return self.q
         
-    class binomial:
+    class Binomial:
         '''
         Binomial Distribution
         
@@ -187,8 +187,8 @@ class DiscreteDistribution:
             self.n = n
             self.p = p 
             self.q = 1 - self.p
-            self.mean = self.n * self.p
-            self.var = self.n * self.p * self.q
+            self.mean = np.round(self.n * self.p, 4)
+            self.var = np.round(self.n * self.p * self.q, 4)
             
         def __repr__(self):
             return f"Binomial with {self.n} number of trials and probability {self.p} \
@@ -196,7 +196,7 @@ class DiscreteDistribution:
         
         def __call__(self, x: int) -> float:
             if not(x in range(self.n+1)):
-                return 0
+                raise Exception(f"x must be in [0, {self.n}] range")
             return np.round(C(self.n, x) * self.p**x * self.q**(self.n-x), 4)
         
         def cdf(self, x: int) -> float:
@@ -205,6 +205,33 @@ class DiscreteDistribution:
             elif x >= self.n:
                 return 1
             else:
-                f = lambda t: (t**(self.n - x - 1)) * (1-t)**x
-                return (self.n - x)*C(self.n, x)*integral(f, 0, self.q)
+                f = lambda t: (t**(self.n - x - 1)) * (1 - t)**x
+                return np.round((self.n - x) * C(self.n, x) * integral(f, 0, self.q), 4)
+    
+    class Geometric:
+        '''
+        Geometric Distribution
         
+        Distribution for number consecutive trials to get the first success
+        '''
+        def __init__(self, p: float):
+            assert 0 <= p <= 1, "Probability of success must be between 0 and 1"
+            self.p = p 
+            self.q = 1 - self.p
+            self.mean = np.round(self.q / self.p, 4)
+            self.var = np.round(self.mean / self.p, 4)
+            
+        def __repr__(self):
+            return f"Geometric with a success probability {self.p} \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x: int) -> float:
+            if not(x >= 0):
+                raise Exception("x must be greater or equal to 0")
+            return np.round(self.p * (self.q**x), 4)
+        
+        def cdf(self, x: int) -> float:
+            if x < 0:
+                return 0
+            else:
+                return np.round(1 - self.q**(x + 1), 4)
