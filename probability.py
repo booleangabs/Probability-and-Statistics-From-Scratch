@@ -279,7 +279,7 @@ class DiscreteDistribution:
             self.var = np.round((self.n**2 - 1) / 12, 4)
             
         def __repr__(self):
-            return f"Discrete uniform with probability {self.p:.4f} \
+            return f"Discrete uniform with probability {self.p:.4f} in [{self.a}, {self.b}] \
                      \nmean = {self.mean} and variance = {self.var}"
         
         def __call__(self, x: int) -> float:
@@ -293,18 +293,71 @@ class DiscreteDistribution:
             elif x >= self.b:
                 return 1
             else:
-                return np.round(x * self.p , 4)
+                return np.round((x - self.a + 1) / self.n , 4)
             
 
 class ContinuousDistribution:
     class Uniform:
-        pass
+        '''
+        Uniform Distribution
+        
+        Distribution for events with uniform probability of happening
+        '''
+        def __init__(self, a: float, b: float):
+            assert 0 <= a <= b, "Invalid interval"
+            self.a = a
+            self.b = b 
+            self.n = b - a
+            self.p = 1 / self.n
+            self.mean = np.round((self.a + self.b) / 2, 4)
+            self.var = np.round((self.n**2) / 12, 4)
+            
+        def __repr__(self):
+            return f"Uniform with probability {self.p:.4f} in [{self.a}, {self.b}] \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x1: float, x2: float) -> float:
+            assert x1 <= x2, "Insert a valid interval"
+            p = self.cdf(x2) - self.cdf(x1)
+            return np.round(p, 4)
+        
+        def cdf(self, x: float) -> float:
+            if x < 0:
+                return 0
+            elif x >= self.b:
+                return 1
+            else:
+                return np.round((x - self.a) / self.n , 4)
     
-    class Exponentia:
-        pass
+    class Exponential:
+        '''
+        Exponential Distribution
+        
+        Distribution for time between events
+        '''
+        def __init__(self, lam: float):
+            assert 0 <= lam, "Invalid lambda"
+            self.lam = lam
+            self.mean = np.round(1 / lam, 4)
+            self.var = np.round(self.mean**2, 4)
+            
+        def __repr__(self):
+            return f"Exponential with occurence rate {self.lam} \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x1: float, x2: float) -> float:
+            assert x1 <= x2, "Insert a valid interval"
+            p = self.cdf(x2) - self.cdf(x1)
+            return np.round(p, 4)
+        
+        def cdf(self, x: float) -> float:
+            if x < 0:
+                return 0
+            else:
+                return np.round(1 - np.e**(-self.lam * x) , 4)
     
     class Normal:
         pass
     
-    class T_student:
+    class T_Student:
         pass
