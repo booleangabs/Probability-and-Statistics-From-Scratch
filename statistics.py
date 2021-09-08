@@ -19,25 +19,34 @@ def variance(X: list) -> float:
 def std(X: list) -> float:
     return variance(X)**0.5
 
-def plot_histogram(X: list, freq: list):
+def plotHistogram(X: list, freq: list):
     pass
 
-def plot_scatter():
+def plotScatter():
     pass
 
-def plot_box():
+def plotBox():
     pass
 
-def plot_bar():
+def plotBar():
     pass
 
-def plot_corr():
+def plotCorr():
     pass
 
-def z_test():
+def confidenceIntMean():
     pass
 
-def t_test():
+def confidenceIntProportion():
+    pass
+
+def confidenceInt2Means():
+    pass
+
+def zTest():
+    pass
+
+def tTest():
     pass
 
 # TODO: Generate LUT for statistical tests
