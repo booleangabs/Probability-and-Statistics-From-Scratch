@@ -1,7 +1,21 @@
-class DataFrame:
-    pass
+import regex as re
 
-def parseCsv(path: str) -> DataFrame:
+class DataCsv:
+    def __init__(self, path: str= None):
+        self.data = parseCsv(path)
+        self.header = list(self.data.keys())
+     
+    def __repr__(self):
+        to_print = ', '.join(self.header) + '\n'
+        to_print_vals = list(zip(*[self.data[i] for i in self.header]))
+        for i in to_print_vals:
+            to_print += ', '.join([str(j) for j in i]) + '\n'
+        return to_print
+    
+    def __getitem__(self, item):
+         return self.data[item]
+       
+def parseCsv(path: str) -> dict:
     file = open(path)
     data = {}
     headers = [i for i in file.readline().strip('\n').split(',')]
@@ -15,10 +29,22 @@ def parseCsv(path: str) -> DataFrame:
         for i, h in enumerate(headers):
             data[h].append(line[i])
             
-    return DataFrame(data)
+    return data
         
-def parseLine(line: str) -> list:
-    pass
+def parseLine(line: str, ) -> list:
+    line = [i for i in line.strip('\n').split(',')]
+    line_parsed = []
+    for substring in line:
+        rfloat = re.compile('[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?', re.VERBOSE)
+        if bool(rfloat.match(substring)):
+            if substring.isdigit():
+                substring = int(substring)
+            else:
+                substring = float(substring)
+        elif substring in ['True', 'False']:
+            substring = int(bool(substring))
+        line_parsed.append(substring)
+    return line_parsed
         
         
         
