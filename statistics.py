@@ -1,19 +1,26 @@
-def mean():
-    pass
+from utils import floor
 
-def variance():
-    pass
+def mean(X: list) -> float:
+    return sum(X) / len(X)
 
-def std():
-    pass
+def mode(X: list) -> float:
+    return max(set(X), key=X.count)
 
-def skewness():
-    pass
+def median(X: list) -> float:
+    X_sorted = sorted(X)
+    n = len(X)
+    if n % 2 != 0:
+        return X_sorted[(n - 1) // 2]
+    else:
+        return (X_sorted[(n - 1) // 2] + X_sorted[((n - 1) // 2) + 1]) / 2
 
-def kurtosis():
-    pass
+def variance(X: list) -> float:
+    return sum([(x - mean(X))**2 for x in X]) / (len(X) - 1)
 
-def plot_histogram():
+def std(X: list) -> float:
+    return variance(X)**0.5
+
+def plot_histogram(X: list, freq: list):
     pass
 
 def plot_scatter():
