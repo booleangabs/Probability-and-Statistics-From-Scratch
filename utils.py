@@ -155,5 +155,3 @@ def generate_range(a, b, n):
     temp = [i/n for i in range(n+1)]
     diff = (b - a)
     return [i * diff + a for i in temp]
-    
-    

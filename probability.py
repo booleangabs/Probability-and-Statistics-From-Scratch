@@ -6,6 +6,8 @@ Created on Fri Aug 20 07:50:21 2021
 """
 from utils import C, integral, summation, fact
 import numpy as np
+from math import gamma
+from scipy.special import hyp2f1
 
 # Basic concepts
 
@@ -389,6 +391,3 @@ class ContinuousDistribution:
             z = lambda x: (x - self.mean) / self.std
             f = lambda x: o * np.e**(-0.5*(z(x)**2))
             return np.round(integral(f, self.mean - 7*self.std, x),  4)
-    
-    class T_Student:
-        pass
