@@ -143,7 +143,7 @@ class DiscreteDistribution:
     Contains the implementation of the most relevant discrete distributions.
     
     Each one can be called returning the probability of assuming value x,
-    each one has the mean, variance (var), skewness (sk) and kurtosis (kts) available.
+    each one has the mean and variance (var) available.
     A cdf method is also available and calculate F(X <= x).
     '''
     
@@ -206,7 +206,7 @@ class DiscreteDistribution:
                 return 1
             else:
                 f = lambda t: (t**(self.n - x - 1)) * (1 - t)**x
-                return np.round((self.n - x) * C(self.n, x) * integral(f, 0, self.q), 4)
+                return np.round((self.n - x) * C(self.n, x) * integral(f, 0, self.q, 10**5), 4)
     
     class Geometric:
         '''
@@ -297,6 +297,13 @@ class DiscreteDistribution:
             
 
 class ContinuousDistribution:
+    '''
+    Contains the implementation of the most relevant continuous distributions.
+    
+    Each one can be called returning the probability of assuming values in an interval,
+    each one has the mean and variance (var) available.
+    A cdf method is also available and calculate F(X <= x).
+    '''
     class Uniform:
         '''
         Uniform Distribution
@@ -357,7 +364,31 @@ class ContinuousDistribution:
                 return np.round(1 - np.e**(-self.lam * x) , 4)
     
     class Normal:
-        pass
+        '''
+        Normal Distribution
+        
+        Do I really need to describe it?
+        '''
+        def __init__(self, mean: float= 0, sigma: float= 1):
+            assert 0 <= sigma, "Invalid variance"
+            self.mean = mean
+            self.var = sigma**2
+            self.std = sigma
+            
+        def __repr__(self):
+            return f"Normal distribution \
+                     \nmean = {self.mean} and variance = {self.var}"
+        
+        def __call__(self, x1: float, x2: float) -> float:
+            assert x1 <= x2, "Insert a valid interval"
+            p = self.cdf(x2) - self.cdf(x1)
+            return np.round(p, 4)
+        
+        def cdf(self, x: float) -> float:
+            o = 1 / (self.std * np.sqrt(2 * np.pi))
+            z = lambda x: (x - self.mean) / self.std
+            f = lambda x: o * np.e**(-0.5*(z(x)**2))
+            return np.round(integral(f, self.mean - 7*self.std, x),  4)
     
     class T_Student:
         pass
