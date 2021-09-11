@@ -4,10 +4,11 @@ Created on Fri Aug 20 07:50:21 2021
 
 @author: Gabriel
 """
-from utils import C, integral, summation, fact
+from utils import C, integral, summation, fact, generate_range, ceil
 import numpy as np
 from math import gamma
 from scipy.special import hyp2f1
+import matplotlib.pyplot as plt
 
 # Basic concepts
 
@@ -178,6 +179,13 @@ class DiscreteDistribution:
             else:
                 return self.q
         
+        def plot(self):
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            plt.scatter([0, 1], [self.q, self.p])
+            axis.set_ylim([-0.025, 1])
+            plt.show()
+        
     class Binomial:
         '''
         Binomial Distribution
@@ -209,6 +217,14 @@ class DiscreteDistribution:
             else:
                 f = lambda t: (t**(self.n - x - 1)) * (1 - t)**x
                 return np.round((self.n - x) * C(self.n, x) * integral(f, 0, self.q, 10**5), 4)
+        
+        def plot(self):
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = [i for i in range(self.n+1)]
+            plt.scatter(to_plot, [self(i) for i in to_plot])
+            axis.set_ylim([-0.025, 1])
+            plt.show()
     
     class Geometric:
         '''
@@ -237,6 +253,15 @@ class DiscreteDistribution:
                 return 0
             else:
                 return np.round(1 - self.q**(x + 1), 4)
+        
+        def plot(self):
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = [i for i in range(30)]
+            probs = [self(i) for i in to_plot]
+            plt.scatter(to_plot, probs)
+            axis.set_ylim([-0.025, min(1, max(probs) + 0.1)])
+            plt.show()
     
     class Poisson:
         '''
@@ -264,6 +289,17 @@ class DiscreteDistribution:
                 return 0
             else:
                 return np.round(summation(self, 0, x) , 4)
+        
+        def plot(self, max_x: int= None):
+            if max_x == None:
+                max_x = self.lam * 3
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = [i for i in range(max_x)]
+            probs = [self(i) for i in to_plot]
+            plt.scatter(to_plot, probs)
+            axis.set_ylim([-0.025, min(1, max(probs) + 0.1)])
+            plt.show()
             
     class DiscreteUniform:
         '''
@@ -296,6 +332,15 @@ class DiscreteDistribution:
                 return 1
             else:
                 return np.round((x - self.a + 1) / self.n , 4)
+        
+        def plot(self):
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = [i for i in range(15)]
+            probs = [self(i) for i in to_plot]
+            plt.scatter(to_plot, probs)
+            axis.set_ylim([-0.05, min(1, max(probs) + 0.1)])
+            plt.show()
             
 
 class ContinuousDistribution:
@@ -337,6 +382,9 @@ class ContinuousDistribution:
                 return 1
             else:
                 return np.round((x - self.a) / self.n , 4)
+        
+        def plot(self):
+            pass
     
     class Exponential:
         '''
@@ -364,6 +412,9 @@ class ContinuousDistribution:
                 return 0
             else:
                 return np.round(1 - np.e**(-self.lam * x) , 4)
+        
+        def plot(self):
+            pass
     
     class Normal:
         '''
@@ -391,3 +442,6 @@ class ContinuousDistribution:
             z = lambda x: (x - self.mean) / self.std
             f = lambda x: o * np.e**(-0.5*(z(x)**2))
             return np.round(integral(f, self.mean - 7*self.std, x),  4)
+        
+        def plot(self):
+            pass
