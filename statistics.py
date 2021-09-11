@@ -22,22 +22,22 @@ def std(X: list) -> float:
 def plotHistogram(X: list, freq: list):
     pass
 
-def plotScatter():
+def plotScatter(X: list, Y: list):
     pass
 
-def plotBox():
+def plotBox(X: list, Y: list):
     pass
 
-def plotBar():
+def plotBar(X: list, Y: list):
     pass
 
-def plotCorr():
+def plotCorr(X: list, Y: list):
     pass
 
-def confidenceIntMean():
+def confidenceIntMean(sample_mean: float, mean: float, std: float, alpha: float= 0.95, from_pop: bool= False):
     pass
 
-def confidenceIntProportion():
+def confidenceIntProportion(previous_belief: float, test_prop: float):
     pass
 
 def confidenceInt2Means():
