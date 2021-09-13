@@ -1,4 +1,5 @@
 import regex as re
+import numpy as np
 
 class DataCsv:
     def __init__(self, path: str= None):
@@ -14,6 +15,20 @@ class DataCsv:
     
     def __getitem__(self, item):
          return self.data[item]
+     
+    def __setitem__(self, name, item):
+         self.data[name] = item
+         
+    def sort(self, name: str):
+        idxs = np.argsort(self[name])
+        for i in self.header:
+            self[i] = np.array(self[i])
+            self[i] = self[i][idxs]
+            self[i] = list(self[i])
+     
+class TimeSeries(DataCsv):
+    pass
+
        
 def parseCsv(path: str) -> dict:
     file = open(path)
