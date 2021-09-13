@@ -308,7 +308,7 @@ class DiscreteDistribution:
         Distribution for events with uniform probability of happening
         '''
         def __init__(self, a: int, b: int):
-            assert 0 <= a <= b, "Invalid interval"
+            assert 0 <= a < b, "Invalid interval"
             self.a = a
             self.b = b 
             self.n = b - a + 1
@@ -336,10 +336,10 @@ class DiscreteDistribution:
         def plot(self):
             figure = plt.figure()
             axis = figure.add_subplot()
-            to_plot = [i for i in range(15)]
+            to_plot = [i for i in range(self.a, self.b + 1)]
             probs = [self(i) for i in to_plot]
             plt.scatter(to_plot, probs)
-            axis.set_ylim([-0.05, min(1, max(probs) + 0.1)])
+            axis.set_ylim([-0.005, 0.6])
             plt.show()
             
 
@@ -358,7 +358,7 @@ class ContinuousDistribution:
         Distribution for events with uniform probability of happening
         '''
         def __init__(self, a: float, b: float):
-            assert 0 <= a <= b, "Invalid interval"
+            assert 0 <= a < b, "Invalid interval"
             self.a = a
             self.b = b 
             self.n = b - a
@@ -384,7 +384,13 @@ class ContinuousDistribution:
                 return np.round((x - self.a) / self.n , 4)
         
         def plot(self):
-            pass
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = [self.a, self.b]
+            probs = [self.p] * 2
+            plt.plot(to_plot, probs)
+            axis.set_ylim([-0.005, 0.6])
+            plt.show()
     
     class Exponential:
         '''
@@ -407,14 +413,25 @@ class ContinuousDistribution:
             p = self.cdf(x2) - self.cdf(x1)
             return np.round(p, 4)
         
+        def call(self, x: float) -> float:
+            return self.lam * np.e**(-self.lam * x)
+        
         def cdf(self, x: float) -> float:
             if x < 0:
                 return 0
             else:
                 return np.round(1 - np.e**(-self.lam * x) , 4)
         
-        def plot(self):
-            pass
+        def plot(self, max_x: int= None):
+            if max_x == None:
+                max_x = (self.lam**-1) * 3
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = generate_range(0, max_x, 10**4)
+            probs = [self.call(i) for i in to_plot]
+            plt.plot(to_plot, probs)
+            axis.set_ylim([-0.0125, max(probs) + 0.075])
+            plt.show()
     
     class Normal:
         '''
@@ -435,13 +452,24 @@ class ContinuousDistribution:
         def __call__(self, x1: float, x2: float) -> float:
             assert x1 <= x2, "Insert a valid interval"
             p = self.cdf(x2) - self.cdf(x1)
-            return np.round(p, 4)
+            return np.round(p, 5)
+        
+        def call(self, x: float) -> float:
+            return (1 / (self.std * (2 * np.pi)**0.5)) * np.e**(-0.5 * (((x - self.mean) / self.std)**2))
         
         def cdf(self, x: float) -> float:
             o = 1 / (self.std * np.sqrt(2 * np.pi))
             z = lambda x: (x - self.mean) / self.std
             f = lambda x: o * np.e**(-0.5*(z(x)**2))
-            return np.round(integral(f, self.mean - 7*self.std, x),  4)
+            return np.round(integral(f, self.mean - 7*self.std, x),  5)
         
         def plot(self):
-            pass
+            max_range = self.mean + (self.std * 7)
+            min_range = self.mean - (self.std * 7)
+            figure = plt.figure()
+            axis = figure.add_subplot()
+            to_plot = generate_range(min_range, max_range, 10**4)
+            probs = [self.call(i) for i in to_plot]
+            plt.plot(to_plot, probs)
+            axis.set_ylim([-0.0125, max(probs) + 0.075])
+            plt.show()
