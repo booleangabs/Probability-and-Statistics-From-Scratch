@@ -1,4 +1,6 @@
 from utils import floor
+import matplotlib.pyplot as plt
+from data import DataCsv, TimeSeries
 
 def mean(X: list) -> float:
     return sum(X) / len(X)
@@ -19,11 +21,20 @@ def variance(X: list) -> float:
 def std(X: list) -> float:
     return variance(X)**0.5
 
-def plotHistogram(X: list, freq: list):
-    pass
-
+def plotHistogram(X: DataCsv, name: str):
+    data = X[name]
+    sorted(data)
+    x1 = data[:len(data) // 2]
+    x2 = data[len(data) // 2:]
+    IQR = (median(x2) - median(x1))
+    h = 2 * IQR / (len(data)**(1 / 3))
+    n = (max(data) - min(data)) // h
+    plt.hist(data, bins = int(n))
+    plt.show()
+    
 def plotScatter(X: list, Y: list):
-    pass
+    plt.scatter(X, Y)
+    plt.show()
 
 def plotBox(X: list, Y: list):
     pass
