@@ -136,6 +136,7 @@ def integral(f, a: float, b: float, n: int = 1000) -> float:
 def generate_range(a, b, n):
     '''
     Generates a n+1 numbers betwen a and b with a constant step.
+    Almost equivalent to numpy linspace
 
     Parameters
     ----------

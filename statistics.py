@@ -72,14 +72,19 @@ def plotCorr(data: DataCsv):
     corr_matrix = [[corr(data[i], data[j]) for i in data.header] for j in data.header]
     sns.heatmap(corr_matrix, annot=True, xticklabels=data.header, yticklabels=data.header)
     
-def confidenceIntMean(sample_mean: float, mean: float, std: float, alpha: float= 0.95, from_pop: bool= False):
-    pass
+def confidenceIntMean(sample_mean: float, n: int, std: float, CL: float= 0.95) -> tuple:
+    margin = z_score(CL) * (std / (np.sqrt(n)))
+    return margin, [sample_mean - margin, sample_mean + margin]
 
-def confidenceIntProportion(previous_belief: float, test_prop: float):
-    pass
+def z_score(CL: float) -> float:
+    cls_ = {0.90: 1.645, 0.95: 1.96, 0.99: 2.58}
+    if not CL in cls_:
+        raise Exception("Use one of the following for C.L.: 0.9, 0.95, 0.99")
+    return cls_[CL]
 
-def confidenceInt2Means():
-    pass
+def confidenceIntProportion(p: float, n: int, CL: float) -> tuple:
+    margin = z_score(CL) * np.sqrt((p * (1- p))/ n)
+    return margin, [p - margin, p + margin]
 
 def zTest():
     pass
