@@ -5,7 +5,20 @@ class Dataset:
     '''
     Loader for csv datasets
     '''
-    def __init__(self, path: str= None):
+    def __init__(self, path: str):
+        '''
+        
+
+        Parameters
+        ----------
+        path : str, optional
+            Path to csv file.
+
+        Returns
+        -------
+        None.
+
+        '''
         self.data = parseCsv(path)
         self.header = list(self.data.keys())
      
@@ -23,6 +36,19 @@ class Dataset:
          self.data[name] = item
          
     def sortByName(self, name: str):
+        '''
+        Sorts values in the data based on the values in a given column.
+
+        Parameters
+        ----------
+        name : str
+            Column name.
+
+        Returns
+        -------
+        None.
+
+        '''
         idxs = np.argsort(self[name])
         for i in self.header:
             self[i] = np.array(self[i])
@@ -31,6 +57,20 @@ class Dataset:
 
        
 def parseCsv(path: str) -> dict:
+    '''
+    
+
+    Parameters
+    ----------
+    path : str
+        Path to csv.
+
+    Returns
+    -------
+    dict
+        Dictionary containing parsed data.
+
+    '''
     file = open(path)
     data = {}
     headers = [i for i in file.readline().strip('\n').split(',')]
@@ -46,7 +86,22 @@ def parseCsv(path: str) -> dict:
             
     return data
         
-def parseLine(line: str, ) -> list:
+def parseLine(line: str) -> list:
+    '''
+    Parses a line from csv file converting strings into the appropriate format
+
+    Parameters
+    ----------
+    line : str
+        
+
+
+    Returns
+    -------
+    list
+        Parsed values.
+
+    '''
     line = [i for i in line.strip('\n').split(',')]
     line_parsed = []
     for substring in line:
